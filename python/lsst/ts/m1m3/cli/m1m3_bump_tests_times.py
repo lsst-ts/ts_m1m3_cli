@@ -25,9 +25,10 @@ import logging
 
 import sty
 from astropy.time import Time, TimeDelta
+from lsst_efd_client import EfdClient
+
 from lsst.ts.xml.enums.MTM1M3 import BumpTest as BumpTestStatus
 from lsst.ts.xml.tables.m1m3 import FATable, force_actuator_from_id
-from lsst_efd_client import EfdClient
 
 from .bump_test_times import BumpTest, BumpTestTimes
 from .chronograf import M1M3ForceActuatorForces

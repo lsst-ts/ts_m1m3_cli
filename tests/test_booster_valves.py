@@ -25,8 +25,9 @@ import unittest
 
 import vcr
 from astropy.time import Time, TimeDelta
-from lsst.ts.m1m3.utils import BoosterValves
 from lsst_efd_client import EfdClient
+
+from lsst.ts.m1m3.utils import BoosterValves
 
 CASSETTE_DIR = os.path.join(os.path.dirname(__file__), "cassettes")
 

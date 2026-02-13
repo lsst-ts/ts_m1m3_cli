@@ -27,8 +27,9 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
 from astropy.time import Time, TimeDelta
-from lsst.ts.xml.tables.m1m3 import FCUTable, fcu_from_address
 from lsst_efd_client import EfdClient
+
+from lsst.ts.xml.tables.m1m3 import FCUTable, fcu_from_address
 
 from .chronograf import M1M3FCUStats
 from .duration_time import DurationTime

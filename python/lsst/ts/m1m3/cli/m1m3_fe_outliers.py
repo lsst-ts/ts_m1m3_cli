@@ -24,8 +24,9 @@ import asyncio
 import logging
 
 from astropy.time import Time, TimeDelta
-from lsst.ts.xml.tables.m1m3 import FATable, force_actuator_from_id
 from lsst_efd_client import EfdClient
+
+from lsst.ts.xml.tables.m1m3 import FATable, force_actuator_from_id
 
 from .booster_valves import BoosterValves
 from .duration_time import DurationTime
