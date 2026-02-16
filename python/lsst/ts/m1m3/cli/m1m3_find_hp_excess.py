@@ -1,3 +1,25 @@
+# This file is part of ts_m1m3_cli.
+#
+# Developed for the LSST Telescope and Site.
+# This product includes software developed by the LSST Project
+# (https://www.lsst.org).
+# See the COPYRIGHT file at the top-level directory of this distribution
+# for details of code ownership.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import pandas as pd
 import argparse
 import asyncio
 
@@ -65,17 +87,17 @@ async def main() -> None:
         "--hp_id",
         type=int,
         default=0,
-        help="Hardpoint identifier [0-5]",
+        help="Hardpoint identifier [1-6]",
     )
     args = parser.parse_args()
     client = EfdClient(args.efd)
-    df = await get_data(client, f"measuredForce{args.hp_id}", Time(args.t1), Time(args.t2))
+    hp_index = args.hp_id - 1
+    df = await get_data(client, f"measuredForce{hp_index}", Time(args.t1), Time(args.t2))
     sampling_freq = 20  # Hz
     time_gap_threshold = TimeDelta(args.time_gap_threshold)
     hpf = HPForces(df, sampling_freq, time_gap_threshold)
     event_summary = hpf.calculate_excesses(args.hp_id, args.delta_t, args.delta_f_threshold)
     event_summary.to_csv(f"event_summary_HP{args.hp_id}_{args.t1}_{args.t2}.txt", sep="\t", index=False)
 
-
-if __name__ == "__main__":
+def run() -> None:
     asyncio.run(main())
