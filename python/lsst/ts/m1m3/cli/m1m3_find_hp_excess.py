@@ -19,7 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import pandas as pd
 import argparse
 import asyncio
 
@@ -98,6 +97,7 @@ async def main() -> None:
     hpf = HPForces(df, sampling_freq, time_gap_threshold)
     event_summary = hpf.calculate_excesses(args.hp_id, args.delta_t, args.delta_f_threshold)
     event_summary.to_csv(f"event_summary_HP{args.hp_id}_{args.t1}_{args.t2}.txt", sep="\t", index=False)
+
 
 def run() -> None:
     asyncio.run(main())
