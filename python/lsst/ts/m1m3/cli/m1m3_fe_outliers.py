@@ -24,12 +24,10 @@ import asyncio
 import logging
 
 from astropy.time import Time, TimeDelta
-from lsst.ts.xml.tables.m1m3 import FATable, force_actuator_from_id
 from lsst_efd_client import EfdClient
 
-from .booster_valves import BoosterValves
-from .duration_time import DurationTime
-from .force_actuator_forces import ForceActuatorForces
+from lsst.ts.m1m3.utils import BoosterValves, DurationTime, ForceActuatorForces
+from lsst.ts.xml.tables.m1m3 import FATable, force_actuator_from_id
 
 
 def parse_arguments(now: Time) -> argparse.Namespace:
