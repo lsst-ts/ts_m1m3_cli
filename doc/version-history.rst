@@ -4,6 +4,11 @@
 Version History
 ===============
 
+v0.1.1
+------
+
+* Fixed imports from ts_m1m3_utils.
+
 v0.1.0
 ------
 
