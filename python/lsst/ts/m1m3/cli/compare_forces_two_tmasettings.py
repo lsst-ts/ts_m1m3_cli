@@ -25,13 +25,14 @@ import logging
 import pathlib
 import warnings
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
 from astropy.time import Time, TimeDelta
 from lsst_efd_client import EfdClient
+
 from lsst.ts.m1m3.utils import ForceCalculator
+
 from .correlate_timeseries import compute_time_delay
 
 N_PRIMARY = 156

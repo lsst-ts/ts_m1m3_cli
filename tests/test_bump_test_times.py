@@ -25,9 +25,10 @@ import unittest
 
 import vcr
 from astropy.time import Time
+from lsst_efd_client import EfdClient
+
 from lsst.ts.m1m3.utils import BumpTestTimes
 from lsst.ts.xml.tables.m1m3 import force_actuator_from_id
-from lsst_efd_client import EfdClient
 
 CASSETTE_DIR = os.path.join(os.path.dirname(__file__), "cassettes")
 
