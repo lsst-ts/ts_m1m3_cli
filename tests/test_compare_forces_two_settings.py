@@ -26,6 +26,7 @@ import unittest
 import pandas as pd
 import vcr
 from astropy.time import Time
+
 from lsst.ts.m1m3.cli import compute_forces
 
 CASSETTE_DIR = os.path.join(os.path.dirname(__file__), "cassettes")
