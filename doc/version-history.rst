@@ -6,7 +6,8 @@ Version History
 
 v0.1.1
 ------
-* Added m1m3_find_hp_excess.py
+
+* Fixed imports from ts_m1m3_utils.
 
 v0.1.0
 ------

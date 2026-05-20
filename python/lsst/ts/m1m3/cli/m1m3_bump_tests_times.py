@@ -27,13 +27,10 @@ import sty
 from astropy.time import Time, TimeDelta
 from lsst_efd_client import EfdClient
 
+from lsst.ts.m1m3.utils import BumpTestTimes, DurationTime, ForceActuatorForces
+from lsst.ts.m1m3.utils.chronograf import M1M3ForceActuatorForces
 from lsst.ts.xml.enums.MTM1M3 import BumpTest as BumpTestStatus
 from lsst.ts.xml.tables.m1m3 import FATable, force_actuator_from_id
-
-from .bump_test_times import BumpTest, BumpTestTimes
-from .chronograf import M1M3ForceActuatorForces
-from .duration_time import DurationTime
-from .force_actuator_forces import ForceActuatorForces
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -108,7 +105,7 @@ async def run_loop() -> None:
         actuator = force_actuator_from_id(aid)
         logging.info(f"** Actuator {aid} type: {actuator.actuator_type}")
 
-        async def print_bump(test: BumpTest) -> None:
+        async def print_bump(test: BumpTestStatus) -> None:
             print(
                 test.start_time.isot,
                 test.end_time.isot,

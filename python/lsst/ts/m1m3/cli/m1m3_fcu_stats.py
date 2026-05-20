@@ -29,11 +29,9 @@ import pandas as pd
 from astropy.time import Time, TimeDelta
 from lsst_efd_client import EfdClient
 
+from lsst.ts.m1m3.utils import DurationTime, FCUStats
+from lsst.ts.m1m3.utils.chronograf import M1M3FCUStats
 from lsst.ts.xml.tables.m1m3 import FCUTable, fcu_from_address
-
-from .chronograf import M1M3FCUStats
-from .duration_time import DurationTime
-from .fcu_stats import FCUStats
 
 
 def plot_fcu_temperature(df: pd.DataFrame, fcu_index: int, start_time: Time, end_time: Time) -> None:
