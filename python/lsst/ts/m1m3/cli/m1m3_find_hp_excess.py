@@ -99,6 +99,11 @@ async def main() -> None:
     event_summary = hpf.calculate_excesses(hp_index, args.delta_t, args.delta_f_threshold)
     event_summary.to_csv(f"event_summary_HP{args.hp_id}_{args.t1}_{args.t2}.txt", sep="\t", index=False)
 
+    if client.influx_client is None:
+        await client._influx_client.close()
+    else:
+        await client.influx_client.close()
+
 
 def run() -> None:
     asyncio.run(main())
