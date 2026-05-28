@@ -96,7 +96,7 @@ async def main() -> None:
     sampling_freq = 20  # Hz
     time_gap_threshold = TimeDelta(args.time_gap_threshold)
     hpf = HPForces(df, sampling_freq, time_gap_threshold)
-    event_summary = hpf.calculate_excesses(hp_index, args.delta_t, args.delta_f_threshold)
+    event_summary = hpf.calculate_excesses(args.hp_id, args.delta_t, args.delta_f_threshold)
     output_filename = f"event_summary_HP{args.hp_id}_{args.t1}_{args.t2}.txt"
     event_summary.to_csv(output_filename, sep="\t", index=False)
     print(f"Output saved to {output_filename}")
