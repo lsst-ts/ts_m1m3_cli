@@ -88,6 +88,12 @@ async def main() -> None:
         default=2,
         help="Hardpoint identifier [1-6]",
     )
+    parser.add_argument(
+        "--output_screen",
+        type=bool,
+        default=True,
+        help="Print out event summary on screen",
+    )
     args = parser.parse_args()
     client = EfdClient(args.efd)
 
@@ -99,6 +105,8 @@ async def main() -> None:
     event_summary = hpf.calculate_excesses(args.hp_id, args.delta_t, args.delta_f_threshold)
     output_filename = f"event_summary_HP{args.hp_id}_{args.t1}_{args.t2}.txt"
     event_summary.to_csv(output_filename, sep="\t", index=False)
+    if args.output_screen:
+        print(event_summary)
     print(f"Output saved to {output_filename}")
 
     if client.influx_client is None:
