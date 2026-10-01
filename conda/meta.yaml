@@ -41,6 +41,7 @@ requirements:
     - python {{python}}
     - astropy
     - matplotlib
+    - numba
     - numpy
     - pandas
     - scipy

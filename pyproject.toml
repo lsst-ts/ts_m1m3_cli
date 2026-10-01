@@ -12,6 +12,7 @@ dynamic = [ "version" ]
 dependencies = [
   "astropy",
   "matplotlib",
+  "numba",
   "numpy",
   "pandas",
   "scipy",

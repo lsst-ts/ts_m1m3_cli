@@ -22,4 +22,5 @@
 from .acceleration_and_velocity import AccelerationAndVelocity
 from .compare_forces_two_tmasettings import compute_forces
 from .correlate_timeseries import compute_time_delay
+from .m1m3_earthquakes import detect_earthquake_signals
 from .find_changes import ChangedValue, find_changes

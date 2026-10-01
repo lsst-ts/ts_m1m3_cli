@@ -24,18 +24,37 @@ import asyncio
 import logging
 from dataclasses import asdict, dataclass
 from traceback import print_exc
-from typing import IO
 
 import numpy as np
 import pandas as pd
 from astropy.time import Time, TimeDelta
 from lsst_efd_client import EfdClient
+from numba import jit
 
 from lsst.ts.m1m3.utils import DurationTime
 
 
 @dataclass
 class Earthquake:
+    """Earthquake record. Stores unfiltered events, so sign_changes is included
+    as a counter - it counts number of sign changes, occuring later in the
+    filtering.
+
+    Attributes
+    ----------
+    timestamp : `Time`
+        Time of the event.
+    component : `str`
+        Name of component - shall be either f[xyz] for forces, or m[xyz] for
+        momements.
+    plain_sum : `float`
+        Plain (signed) sum of force values in test window.
+    abs_sum : `float`
+        Sum of absolute values in test window.
+    sign_changes : `float`
+        Sign changes counter.
+    """
+
     timestamp: Time
     component: str
     plain_sum: float
@@ -49,19 +68,51 @@ async def detect_earthquake_signals(
     chunk_timedelta: TimeDelta = TimeDelta(3600, format="sec"),
     n_measurements: int = 10,
     min_sign_changes: int = 3,
-    zero_tolerance: float = 10.0,
-    abs_sum_threshold: float = 600.0,
+    zero_tolerance: float = 1000.0,
+    abs_sum_threshold: float = 6000.0,
     efd_instance: str = "usdf_efd",
-    topic_name: str = "lsst.sal.MTM1M3.hardpointActuatorData",
-    output_file: str | IO | None = None,
-) -> None:
+) -> pd.DataFrame:
     """
     Queries MTM1M3 EFD telemetry data, calculates rolling sums and absolute
     sums, and identifies potential earthquake signatures where forces oscillate
     around zero.
+
+    Parameters
+    ----------
+    start_time : `Time`
+        Interval search start time.
+    end_time : `Time`
+        Interval search end time.
+    chunk_timedelta : `TimeDelta`
+        Duration of chunk for EFD queries (EFD cannot return huge amount of
+        data). Defaults to 1 hour.
+    n_measurements : `int`
+        Window width in measurements. As the M1M3 runs on 50 Hz, a measurement
+        is available every 20 milliseconds. Defaults to 10.
+    min_sign_changes : `int`
+        Minimal number of sign changes for filtering. If the wave produced
+        isn't fast enough, it will be filtered out. Defaults to 3.
+    zero_tolerance : `float`
+        Tolerance for zero crossing in N. Defaults to 1000.0. The higher the
+        value, the higher would be number of event - including false triggers.
+        Suggested value is 100.0 * n_measurements.
+    abs_sum_threshold : `float`
+        Threshold for absolute sum in N. Defauts to 6000.0. The higher the
+        value, the lower number of events. Suggested value is 600.0 *
+        n_measurements.
+    efd_instance : `str`
+        EFD instance to query. Defaults to usdf_efd.
+
+    Returns
+    -------
+    data : `pd.DataFrame`
+        Dataframe of filtered Earthquake events. Earthquake attributes form
+        columns labels.
     """
     # 1. Initialize the EFD Client
     client = EfdClient(efd_instance)
+
+    topic_name = "lsst.sal.MTM1M3.hardpointActuatorData"
 
     logging.info(f"Connecting to EFD ({efd_instance})...")
     print(f"Querying topic '{topic_name}' from {start_time} to {end_time} (UTC)...")
@@ -118,11 +169,15 @@ async def detect_earthquake_signals(
                 plain_sum = plain_window.sum()
                 abs_sum = df[col].abs().rolling(window=n_measurements).sum()
 
+                # jit speeds-up processing by ~10%, so worth the hassle
+                @jit
                 def count_sign_changes(window: np.array) -> int:
                     signs = np.sign(window)
                     signs = signs[signs != 0]
                     return (signs[:-1] != signs[1:]).sum()
 
+                # raw to speed-up computation - surprisingly, that takes more
+                # time than estimated
                 sign_changes = plain_window.apply(count_sign_changes, raw=True)
 
                 # Condition: Plain sum is close to 0 (within `zero_tolerance`)
@@ -187,18 +242,17 @@ async def detect_earthquake_signals(
     else:
         print("\nNo earthquake signatures matched the criteria in this time range.")
 
-    if output_file is not None:
-        file_name = output_file.name if hasattr(output_file, "name") else output_file
-        try:
-            pd.DataFrame([asdict(x) for x in filtered_events]).to_csv(output_file, index=False)
-            logging.info(f"Saved {len(filtered_events)} records to {file_name}.")
-        except Exception as e:
-            print_exc()
-
-            logging.error(f"Error writing to {file_name}: {e}.")
+    return pd.DataFrame([asdict(x) for x in filtered_events])
 
 
 def parse_arguments() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns
+    -------
+    args : `argparse.Namespace`
+        Parsed arguments.
+    """
     now = Time.now()
 
     parser = argparse.ArgumentParser(description="Look for possible seismic events.")
@@ -273,7 +327,7 @@ def run() -> None:
     level = logging.DEBUG if args.d else logging.INFO
     logging.basicConfig(format="%(asctime)s %(message)s", level=level)
 
-    asyncio.run(
+    filtered_df = asyncio.run(
         detect_earthquake_signals(
             start_time=start_t,
             end_time=end_t,
@@ -282,6 +336,10 @@ def run() -> None:
             min_sign_changes=args.sign_changes,
             zero_tolerance=args.s * args.n,
             abs_sum_threshold=args.a * args.n,
-            output_file=args.output,
         )
     )
+
+    if args.output is not None:
+        file_name = args.output.name if hasattr(args.output, "name") else args.output
+        filtered_df.to_csv(args.output, index=False)
+        logging.info(f"Saved {len(filtered_df.index)} records to {file_name}.")
