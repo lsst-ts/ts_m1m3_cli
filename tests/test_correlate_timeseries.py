@@ -19,28 +19,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import sys
 import unittest
 
 import pandas as pd
-import vcr
+import pytest
 from astropy.time import Time, TimeDelta
 
 from lsst.ts.m1m3.cli import compute_time_delay
-
-CASSETTE_DIR = os.path.join(os.path.dirname(__file__), "cassettes")
-
-myvcr = vcr.VCR(
-    cassette_library_dir=CASSETTE_DIR,
-    record_mode=os.getenv("RECORD_MODE", "none"),
-    match_on=["method", "scheme", "host", "port", "path", "query", "body"],
-)
 
 
 class CorrelateTimeseriesTestCase(unittest.IsolatedAsyncioTestCase):
     """Tests correlate_timeseries"""
 
+    @pytest.mark.vcr
     async def test_correlate_timeseries(self) -> None:
         t1 = Time("2025-09-12T09:42:30Z")
         t2 = Time("2025-09-12T09:59:50Z")
@@ -49,19 +40,16 @@ class CorrelateTimeseriesTestCase(unittest.IsolatedAsyncioTestCase):
         sampling = 20
         overlay = TimeDelta(60, format="sec")
 
-        with myvcr.use_cassette("correlate_timeseries.yaml"):
-            [delay_test1, s1_test1, s2_test1] = await compute_time_delay(
-                "usdf_efd", t1, t2, delta_t, sampling, overlay
-            )
-            [delay_test2, s1_test2, s2_test2] = await compute_time_delay(
-                "usdf_efd", t1, t2 + extra_shift_test2, delta_t, sampling, overlay
-            )
+        [delay_test1, s1_test1, s2_test1] = await compute_time_delay(
+            "usdf_efd", t1, t2, delta_t, sampling, overlay
+        )
+        [delay_test2, s1_test2, s2_test2] = await compute_time_delay(
+            "usdf_efd", t1, t2 + extra_shift_test2, delta_t, sampling, overlay
+        )
 
         self.assertAlmostEqual(delay_test1 / sampling, 55.60)
         self.assertAlmostEqual(delay_test2 / sampling, 52.40)
 
 
 if __name__ == "__main__":
-    if "RECORD_MODE" not in os.environ:
-        print(f"To generate new cassettes with pre-downloaded data use: RECORD_MODE=all python {sys.argv[0]}")
     unittest.main()

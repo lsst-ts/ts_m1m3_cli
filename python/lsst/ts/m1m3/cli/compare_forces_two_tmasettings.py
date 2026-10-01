@@ -110,7 +110,8 @@ async def compute_forces(
 
     # however we need to get the indices at the same times in both,
     # so we need to interpolate one of them to the indices of the other one
-    s2_interp = s2.reindex(s1.index.union(s2.index)).interpolate("time").reindex(s1.index)
+    s2_numeric = s2.select_dtypes(include="number")
+    s2_interp = s2_numeric.reindex(s1.index.union(s2.index)).interpolate("time").reindex(s1.index)
 
     data1_primary = [None] * N_PRIMARY
     data1_secondary = [None] * N_SECONDARY

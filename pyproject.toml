@@ -50,8 +50,12 @@ __all__ = ["__version__"]
 __version__ = "{version}"
 """
 
-[tool.pytest.ini_options]
+[tool.pytest]
 asyncio_mode = "auto"
+dependencies = [
+  "pytest-recording>=0.13.0",
+  "vcrpy>=8.3.0",
+]
 
 [project.optional-dependencies]
 dev = ["documenteer[pipelines]"]

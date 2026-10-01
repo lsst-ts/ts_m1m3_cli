@@ -37,7 +37,7 @@ from lsst.ts.m1m3.utils import DurationTime
 @dataclass
 class Earthquake:
     """Earthquake record. Stores unfiltered events, so sign_changes is included
-    as a counter - it counts number of sign changes, occuring later in the
+    as a counter - it counts number of sign changes, occurring later in the
     filtering.
 
     Attributes
@@ -46,7 +46,7 @@ class Earthquake:
         Time of the event.
     component : `str`
         Name of component - shall be either f[xyz] for forces, or m[xyz] for
-        momements.
+        moments.
     plain_sum : `float`
         Plain (signed) sum of force values in test window.
     abs_sum : `float`
@@ -97,7 +97,7 @@ async def detect_earthquake_signals(
         value, the higher would be number of event - including false triggers.
         Suggested value is 100.0 * n_measurements.
     abs_sum_threshold : `float`
-        Threshold for absolute sum in N. Defauts to 6000.0. The higher the
+        Threshold for absolute sum in N. Defaults to 6000.0. The higher the
         value, the lower number of events. Suggested value is 600.0 *
         n_measurements.
     efd_instance : `str`
@@ -109,140 +109,148 @@ async def detect_earthquake_signals(
         Dataframe of filtered Earthquake events. Earthquake attributes form
         columns labels.
     """
-    # 1. Initialize the EFD Client
-    client = EfdClient(efd_instance)
 
     topic_name = "lsst.sal.MTM1M3.hardpointActuatorData"
 
-    logging.info(f"Connecting to EFD ({efd_instance})...")
-    print(f"Querying topic '{topic_name}' from {start_time} to {end_time} (UTC)...")
-    logging.debug(f"Chunk size limit: {chunk_timedelta} seconds.\n")
+    # 1. Initialize the EFD Client
+    async with EfdClient(efd_instance) as client:
+        logging.info(f"Connecting to EFD ({efd_instance})...")
+        print(f"Querying topic '{topic_name}' from {start_time} to {end_time} (UTC)...")
+        logging.debug(f"Chunk size limit: {chunk_timedelta} seconds.\n")
 
-    target_cols = ["fx", "fy", "fz", "mx", "my", "mz"]
+        target_cols = ["fx", "fy", "fz", "mx", "my", "mz"]
 
-    alerts_triggered: list[Earthquake] = []
-    chunk_start = start_time
-    previous_df: None | pd.DataFrame = None
+        alerts_triggered: list[Earthquake] = []
+        chunk_start = start_time
+        previous_df: None | pd.DataFrame = None
 
-    # Loop through time range in chunks
-    while chunk_start < end_time:
-        chunk_end = min(chunk_start + chunk_timedelta, end_time)
+        # Loop through time range in chunks
+        while chunk_start < end_time:
+            chunk_end = min(chunk_start + chunk_timedelta, end_time)
 
-        logging.debug(f"Fetching chunk: {chunk_start} to {chunk_end}...")
+            logging.debug(f"Fetching chunk: {chunk_start} to {chunk_end}...")
 
-        try:
-            # Query the current chunk
-            df = await client.select_time_series(
-                topic_name, ["timestamp"] + target_cols, chunk_start, chunk_end
-            )
-
-            if df.empty:
-                logging.warning(f"No data in chunk {chunk_start} to {chunk_end}, skipping.")
-                chunk_start = chunk_end
-                previous_df = None
-                continue
-
-            logging.debug(
-                f"Retrieved {len(df)} rows. Processing running sums for window n = {n_measurements}..."
-            )
-
-            if previous_df is not None:
-                gap = df.index[0] - previous_df.index[-1]
-                if gap < pd.Timedelta(milliseconds=40):
-                    df = pd.concat([previous_df, df])
-                    logging.debug(
-                        f"Continuous stream detected (gap: {gap.total_seconds() * 1000:.1f} ms). "
-                        f"Carried over {len(previous_df)} rows."
-                    )
-                else:
-                    logging.warning(
-                        f"Data gap too large (gap: {gap.total_seconds() * 1000:.1f} ms), "
-                        "starting fresh rolling window."
-                    )
-
-            # Evaluate rolling windows for each column
-            for col in target_cols:
-                # Calculate plain running sum and absolute running sum on data
-
-                plain_window = df[col].rolling(window=n_measurements)
-
-                plain_sum = plain_window.sum()
-                abs_sum = df[col].abs().rolling(window=n_measurements).sum()
-
-                # jit speeds-up processing by ~10%, so worth the hassle
-                @jit
-                def count_sign_changes(window: np.array) -> int:
-                    signs = np.sign(window)
-                    signs = signs[signs != 0]
-                    return (signs[:-1] != signs[1:]).sum()
-
-                # raw to speed-up computation - surprisingly, that takes more
-                # time than estimated
-                sign_changes = plain_window.apply(count_sign_changes, raw=True)
-
-                # Condition: Plain sum is close to 0 (within `zero_tolerance`)
-                # AND absolute sum exceeds `abs_sum_threshold`
-                condition = (
-                    (plain_sum.abs() <= zero_tolerance)
-                    & (abs_sum > abs_sum_threshold)
-                    & (sign_changes >= min_sign_changes)
+            try:
+                # Query the current chunk
+                df = await client.select_time_series(
+                    topic_name, ["timestamp"] + target_cols, chunk_start, chunk_end
                 )
 
-                matched_rows = df[condition]
-                for timestamp in matched_rows.index:
-                    alerts_triggered.append(
-                        Earthquake(
-                            timestamp, col, plain_sum[timestamp], abs_sum[timestamp], sign_changes[timestamp]
-                        )
-                    )
+                if df.empty:
+                    logging.warning(f"No data in chunk {chunk_start} to {chunk_end}, skipping.")
+                    chunk_start = chunk_end
+                    previous_df = None
+                    continue
 
-            previous_df = df[-n_measurements + 1 :].copy()
-
-        except Exception as e:
-            print_exc()
-
-            logging.error(f"Error querying chunk {chunk_start} to {chunk_end}: {e}.")
-
-        # Move forward to the next chunk
-        chunk_start = chunk_end
-
-    # Filter and output detected events
-
-    last_event = dict(zip(target_cols, [None] * len(target_cols)))
-
-    filtered_events: list[Earthquake] = []
-
-    if len(alerts_triggered) > 0:
-        print("\n--- Detection Results ---")
-        for earthquake in sorted(alerts_triggered, key=lambda earthquake: earthquake.timestamp):
-            # find closest in-time non-triggered axis
-
-            times: list[Time] = [
-                last_event[k] for k in last_event if last_event[k] is not None and k != earthquake.component
-            ]
-
-            if len(times) > 0 and (earthquake.timestamp - max(times)) < TimeDelta(
-                0.021 * n_measurements, format="sec"
-            ):
-                print(
-                    f"{earthquake.timestamp} earthquake ("
-                    f"component: {earthquake.component}, "
-                    f"plain sum: {earthquake.plain_sum:.1f}, "
-                    f"abs_sum: {earthquake.abs_sum:.1f}, "
-                    f"sign_changes: {earthquake.sign_changes})"
-                )
-                filtered_events.append(earthquake)
-            else:
                 logging.debug(
-                    f"Filtered out: {earthquake.component}: {earthquake.timestamp} {earthquake.plain_sum} "
-                    f"{earthquake.abs_sum} {earthquake.sign_changes}"
+                    f"Retrieved {len(df)} rows. Processing running sums for window n = {n_measurements}..."
                 )
 
-            last_event[earthquake.component] = earthquake.timestamp
-    else:
-        print("\nNo earthquake signatures matched the criteria in this time range.")
+                if previous_df is not None:
+                    gap = df.index[0] - previous_df.index[-1]
+                    if gap < pd.Timedelta(milliseconds=40):
+                        df = pd.concat([previous_df, df])
+                        logging.debug(
+                            f"Continuous stream detected (gap: {gap.total_seconds() * 1000:.1f} ms). "
+                            f"Carried over {len(previous_df)} rows."
+                        )
+                    else:
+                        logging.warning(
+                            f"Data gap too large (gap: {gap.total_seconds() * 1000:.1f} ms), "
+                            "starting fresh rolling window."
+                        )
 
-    return pd.DataFrame([asdict(x) for x in filtered_events])
+                # Evaluate rolling windows for each column
+                for col in target_cols:
+                    # Calculate plain running sum and absolute running sum on
+                    # data
+
+                    plain_window = df[col].rolling(window=n_measurements)
+
+                    plain_sum = plain_window.sum()
+                    abs_sum = df[col].abs().rolling(window=n_measurements).sum()
+
+                    # jit speeds-up processing by ~10%, so worth the hassle
+                    @jit
+                    def count_sign_changes(window: np.array) -> int:
+                        signs = np.sign(window)
+                        signs = signs[signs != 0]
+                        return (signs[:-1] != signs[1:]).sum()
+
+                    # raw to speed-up computation - surprisingly, that takes
+                    # more time than estimated
+                    sign_changes = plain_window.apply(count_sign_changes, raw=True)
+
+                    # Condition: Plain sum is close to 0 (within
+                    # `zero_tolerance`) AND absolute sum exceeds
+                    # `abs_sum_threshold`
+                    condition = (
+                        (plain_sum.abs() <= zero_tolerance)
+                        & (abs_sum > abs_sum_threshold)
+                        & (sign_changes >= min_sign_changes)
+                    )
+
+                    matched_rows = df[condition]
+                    for timestamp in matched_rows.index:
+                        alerts_triggered.append(
+                            Earthquake(
+                                timestamp,
+                                col,
+                                plain_sum[timestamp],
+                                abs_sum[timestamp],
+                                sign_changes[timestamp],
+                            )
+                        )
+
+                previous_df = df[-n_measurements + 1 :].copy()
+
+            except Exception as e:
+                print_exc()
+
+                logging.error(f"Error querying chunk {chunk_start} to {chunk_end}: {e}.")
+
+            # Move forward to the next chunk
+            chunk_start = chunk_end
+
+        # Filter and output detected events
+
+        last_event = dict(zip(target_cols, [None] * len(target_cols)))
+
+        filtered_events: list[Earthquake] = []
+
+        if len(alerts_triggered) > 0:
+            print("\n--- Detection Results ---")
+            for earthquake in sorted(alerts_triggered, key=lambda earthquake: earthquake.timestamp):
+                # find closest in-time non-triggered axis
+
+                times: list[Time] = [
+                    last_event[k]
+                    for k in last_event
+                    if last_event[k] is not None and k != earthquake.component
+                ]
+
+                if len(times) > 0 and (earthquake.timestamp - max(times)) < TimeDelta(
+                    0.021 * n_measurements, format="sec"
+                ):
+                    print(
+                        f"{earthquake.timestamp} earthquake ("
+                        f"component: {earthquake.component}, "
+                        f"plain sum: {earthquake.plain_sum:.1f}, "
+                        f"abs_sum: {earthquake.abs_sum:.1f}, "
+                        f"sign_changes: {earthquake.sign_changes})"
+                    )
+                    filtered_events.append(earthquake)
+                else:
+                    logging.debug(
+                        f"Filtered out: {earthquake.component}: {earthquake.timestamp} "
+                        f"{earthquake.plain_sum} {earthquake.abs_sum} {earthquake.sign_changes}"
+                    )
+
+                last_event[earthquake.component] = earthquake.timestamp
+        else:
+            print("\nNo earthquake signatures matched the criteria in this time range.")
+
+        return pd.DataFrame([asdict(x) for x in filtered_events])
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -336,6 +344,7 @@ def run() -> None:
             min_sign_changes=args.sign_changes,
             zero_tolerance=args.s * args.n,
             abs_sum_threshold=args.a * args.n,
+            efd_instance=args.efd,
         )
     )
 

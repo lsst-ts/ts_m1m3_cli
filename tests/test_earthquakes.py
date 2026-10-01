@@ -19,35 +19,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import sys
 import unittest
 
-import vcr
+import pytest
 from astropy.time import Time, TimeDelta
 
 from lsst.ts.m1m3.cli import detect_earthquake_signals
 
-CASSETTE_DIR = os.path.join(os.path.dirname(__file__), "cassettes")
 
-myvcr = vcr.VCR(
-    cassette_library_dir=CASSETTE_DIR,
-    record_mode=os.getenv("RECORD_MODE", "none"),
-    match_on=["method", "scheme", "host", "port", "path", "query", "body"],
-)
-
-
-class TestEarthquakes(unittest.IsolatedAsyncioTestCase):
+class EarthquakesTestCase(unittest.IsolatedAsyncioTestCase):
     """Test earthquakes detection"""
 
+    @pytest.mark.vcr
     async def test_detect_earthquake_signals(self) -> None:
         t1 = Time("2026-07-04T02:53:00Z")
         t2 = Time("2026-07-04T03:20:00Z")
 
-        with myvcr.use_cassette("detect_earthquake_signals"):
-            earthquake_signals = await detect_earthquake_signals(
-                t1, t2, chunk_timedelta=TimeDelta(1200, format="sec")
-            )
+        earthquake_signals = await detect_earthquake_signals(
+            t1, t2, chunk_timedelta=TimeDelta(1200, format="sec")
+        )
 
         assert len(earthquake_signals.index) == 78
 
@@ -56,6 +46,4 @@ class TestEarthquakes(unittest.IsolatedAsyncioTestCase):
 
 
 if __name__ == "__main__":
-    if "RECORD_MODE" not in os.environ:
-        print(f"To generate new cassettes with pre-downloaded data use: RECORD_MODE=all python {sys.argv[0]}")
     unittest.main()

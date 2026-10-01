@@ -91,62 +91,59 @@ async def run_loop() -> None:
 
     logging.basicConfig(format="%(asctime)s %(message)s", level=level)
 
-    client = EfdClient(args.efd)
+    with EfdClient(args.efd) as client:
+        btt = BumpTestTimes(client)
+        m1m3_forces = M1M3ForceActuatorForces(args.efd)
 
-    btt = BumpTestTimes(client)
-    m1m3_forces = M1M3ForceActuatorForces(args.efd)
+        if len(args.actuators) == 0:
+            args.actuators = [fa.actuator_id for fa in FATable]
 
-    if len(args.actuators) == 0:
-        args.actuators = [fa.actuator_id for fa in FATable]
+        logging.info("Looking for bump test times in %s to %s", str(start_t), str(end_t))
 
-    logging.info("Looking for bump test times in %s to %s", str(start_t), str(end_t))
+        for aid in [int(a) for a in args.actuators]:
+            actuator = force_actuator_from_id(aid)
+            logging.info(f"** Actuator {aid} type: {actuator.actuator_type}")
 
-    for aid in [int(a) for a in args.actuators]:
-        actuator = force_actuator_from_id(aid)
-        logging.info(f"** Actuator {aid} type: {actuator.actuator_type}")
+            async def print_bump(test: BumpTestStatus) -> None:
+                print(
+                    test.start_time.isot,
+                    test.end_time.isot,
+                    test.start_time < test.end_time,
+                )
+                url = m1m3_forces.fa_url(test.start_time, test.end_time, test.fa)
+                print(
+                    sty.fg.green if test.result == BumpTestStatus.PASSED else sty.fg.red,
+                    test.start_time.isot,
+                    test.end_time.isot,
+                    test.result,
+                    sty.fg.rs,
+                    url,
+                )
+                if args.details:
+                    faf = ForceActuatorForces(test.start_time, test.end_time, client)
+                    fa_fe = await faf.actuator_following_error(actuator)
+                    print(
+                        f"Following errors min: {fa_fe.primary.min():.3f} N "
+                        f"max: {fa_fe.secondary.max():.3f} N"
+                    )
+                    following_errors = await faf.following_errors()
+                    flat_fe = following_errors.values.reshape(-1)
+                    print(f"All following errors min: {flat_fe.min():.3f} N max {flat_fe.max():.3f} N")
 
-        async def print_bump(test: BumpTestStatus) -> None:
-            print(
-                test.start_time.isot,
-                test.end_time.isot,
-                test.start_time < test.end_time,
-            )
-            url = m1m3_forces.fa_url(test.start_time, test.end_time, test.fa)
-            print(
-                sty.fg.green if test.result == BumpTestStatus.PASSED else sty.fg.red,
-                test.start_time.isot,
-                test.end_time.isot,
-                test.result,
-                sty.fg.rs,
-                url,
-            )
-            if args.details:
-                faf = ForceActuatorForces(test.start_time, test.end_time, client)
-                fa_fe = await faf.actuator_following_error(actuator)
-                print(f"Following errors min: {fa_fe.primary.min():.3f} N max: {fa_fe.secondary.max():.3f} N")
-                following_errors = await faf.following_errors()
-                flat_fe = following_errors.values.reshape(-1)
-                print(f"All following errors min: {flat_fe.min():.3f} N max {flat_fe.max():.3f} N")
-
-        print(sty.fg.yellow, "Primary bump tests - FA", actuator.actuator_id, sty.bg.rs)
-        async for bump in btt.find_times(actuator, True, start_t, end_t):
-            await print_bump(bump)
-
-        if actuator.s_index is not None:
-            print(sty.bg.blue, "\u25a9" * 50, sty.bg.rs)
-            print(
-                sty.fg.yellow,
-                "Secondary bump tests - FA",
-                actuator.actuator_id,
-                sty.fg.rs,
-            )
-            async for bump in btt.find_times(actuator, False, start_t, end_t):
+            print(sty.fg.yellow, "Primary bump tests - FA", actuator.actuator_id, sty.bg.rs)
+            async for bump in btt.find_times(actuator, True, start_t, end_t):
                 await print_bump(bump)
 
-    if client.influx_client is None:
-        await client._influx_client.close()
-    else:
-        await client.influx_client.close()
+            if actuator.s_index is not None:
+                print(sty.bg.blue, "\u25a9" * 50, sty.bg.rs)
+                print(
+                    sty.fg.yellow,
+                    "Secondary bump tests - FA",
+                    actuator.actuator_id,
+                    sty.fg.rs,
+                )
+                async for bump in btt.find_times(actuator, False, start_t, end_t):
+                    await print_bump(bump)
 
 
 def run() -> None:
