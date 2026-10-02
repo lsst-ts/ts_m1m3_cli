@@ -1,6 +1,6 @@
 # This file is part of ts_m1m3_cli.
 #
-# Developed for the LSST Data Management System.
+# Developed for the Vera C. Rubin Observatory Telescope and Site Systems.
 # This product includes software developed by the LSST Project
 # (https://www.lsst.org).
 # See the COPYRIGHT file at the top-level directory of this distribution
@@ -13,11 +13,11 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
 import asyncio
@@ -110,7 +110,8 @@ async def compute_forces(
 
     # however we need to get the indices at the same times in both,
     # so we need to interpolate one of them to the indices of the other one
-    s2_interp = s2.reindex(s1.index.union(s2.index)).interpolate("time").reindex(s1.index)
+    s2_numeric = s2.select_dtypes(include="number")
+    s2_interp = s2_numeric.reindex(s1.index.union(s2.index)).interpolate("time").reindex(s1.index)
 
     data1_primary = [None] * N_PRIMARY
     data1_secondary = [None] * N_SECONDARY
