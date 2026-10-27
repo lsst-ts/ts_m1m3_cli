@@ -23,6 +23,7 @@ build:
 
 test:
   requires:
+    - numba
     - pytest
     - pytest-recording
     - vcrpy
