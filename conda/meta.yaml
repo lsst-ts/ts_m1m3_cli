@@ -19,10 +19,12 @@ build:
     - m1m3-bump-tests-times = lsst.ts.m1m3.cli.m1m3_bump_tests_times:run
     - m1m3-fcu-stats = lsst.ts.m1m3.cli.fcu_stats:run
     - m1m3-fe-outliers = lsst.ts.m1m3.cli.m1m3_fe_outliers:run
+    - m1m3-earthquakes = lsst.ts.m1m3.cli.m1m3_earthquakes:run
 
 test:
   requires:
     - pytest
+    - pytest-recording
     - vcrpy
     - ts-conda-build =0.5
   source_files:
@@ -40,6 +42,7 @@ requirements:
     - python {{python}}
     - astropy
     - matplotlib
+    - numba
     - numpy
     - pandas
     - scipy

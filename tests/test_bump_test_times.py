@@ -1,6 +1,6 @@
 # This file is part of ts_m1m3_cli.
 #
-# Developed for the Rubin Observatory Telescope and Site System.
+# Developed for the Vera C. Rubin Observatory Telescope and Site Systems.
 # This product includes software developed by the LSST Project
 # (https://www.lsst.org).
 # See the COPYRIGHT file at the top-level directory of this distribution
@@ -13,30 +13,20 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import sys
 import unittest
 
-import vcr
+import pytest
 from astropy.time import Time
 from lsst_efd_client import EfdClient
 
 from lsst.ts.m1m3.utils import BumpTestTimes
 from lsst.ts.xml.tables.m1m3 import force_actuator_from_id
-
-CASSETTE_DIR = os.path.join(os.path.dirname(__file__), "cassettes")
-
-myvcr = vcr.VCR(
-    cassette_library_dir=CASSETTE_DIR,
-    record_mode=os.getenv("RECORD_MODE", "none"),
-    match_on=["method", "scheme", "host", "port", "path", "query", "body"],
-)
 
 
 class BumpTestTimesTestCase(unittest.IsolatedAsyncioTestCase):
@@ -72,26 +62,24 @@ class BumpTestTimesTestCase(unittest.IsolatedAsyncioTestCase):
         )
         return (primary, secondary)
 
+    @pytest.mark.vcr
     async def test_times_saa(self) -> None:
-        with myvcr.use_cassette("bump_test_times_saa.yaml"):
-            primary, secondary = await self.get_tests(
-                101, Time("2024-09-09 13:28:04"), Time("2024-09-16 13:28:04")
-            )
+        primary, secondary = await self.get_tests(
+            101, Time("2024-09-09 13:28:04"), Time("2024-09-16 13:28:04")
+        )
 
         self.assertEqual(len(primary), 10)
         self.assertEqual(len(secondary), 0)
 
+    @pytest.mark.vcr
     async def test_times_daa(self) -> None:
-        with myvcr.use_cassette("bump_test_times_daa.yaml"):
-            primary, secondary = await self.get_tests(
-                435, Time("2024-09-09 13:28:04"), Time("2024-09-16 13:28:04")
-            )
+        primary, secondary = await self.get_tests(
+            435, Time("2024-09-09 13:28:04"), Time("2024-09-16 13:28:04")
+        )
 
         self.assertEqual(len(primary), 10)
         self.assertEqual(len(secondary), 10)
 
 
 if __name__ == "__main__":
-    if "RECORD_MODE" not in os.environ:
-        print(f"To generate new cassettes with pre-downloaded data use: RECORD_MODE=all python {sys.argv[0]}")
     unittest.main()

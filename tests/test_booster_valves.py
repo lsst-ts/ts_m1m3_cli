@@ -1,6 +1,6 @@
 # This file is part of ts_m1m3_cli.
 #
-# Developed for the Rubin Observatory Telescope and Site System.
+# Developed for the Vera C. Rubin Observatory Telescope and Site Systems.
 # This product includes software developed by the LSST Project
 # (https://www.lsst.org).
 # See the COPYRIGHT file at the top-level directory of this distribution
@@ -13,29 +13,19 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import sys
 import unittest
 
-import vcr
+import pytest
 from astropy.time import Time, TimeDelta
 from lsst_efd_client import EfdClient
 
 from lsst.ts.m1m3.utils import BoosterValves
-
-CASSETTE_DIR = os.path.join(os.path.dirname(__file__), "cassettes")
-
-myvcr = vcr.VCR(
-    cassette_library_dir=CASSETTE_DIR,
-    record_mode=os.getenv("RECORD_MODE", "none"),
-    match_on=["method", "scheme", "host", "port", "path", "query", "body"],
-)
 
 
 class BoosterValvesTestCase(unittest.IsolatedAsyncioTestCase):
@@ -45,26 +35,25 @@ class BoosterValvesTestCase(unittest.IsolatedAsyncioTestCase):
     async def get_tests(self, start: Time, end: Time) -> list[BoosterValves]:
         return [tt async for tt in self.bv.find_opened(start, end)]
 
+    @pytest.mark.vcr
     async def test_booster_valves(self) -> None:
         self.bv = BoosterValves(self.client)
-        with myvcr.use_cassette("booster_valves.yaml"):
-            ret = await self.get_tests(Time("2024-01-10 01:00:00"), Time("2024-01-10 02:00:00"))
-            assert len(ret) == 58
 
-            ret = await self.get_tests(Time("2024-01-10 00:00:00"), Time("2024-01-10 10:00:00"))
-            assert len(ret) == 432
+        ret = await self.get_tests(Time("2024-01-10 01:00:00"), Time("2024-01-10 02:00:00"))
+        assert len(ret) == 58
 
+        ret = await self.get_tests(Time("2024-01-10 00:00:00"), Time("2024-01-10 10:00:00"))
+        assert len(ret) == 432
+
+    @pytest.mark.vcr
     async def test_booster_diff(self) -> None:
-        with myvcr.use_cassette("booster_diff.yaml"):
-            self.bv = BoosterValves(self.client, TimeDelta(3600, format="sec"))
-            ret = await self.get_tests(Time("2024-01-10 01:00:00"), Time("2024-01-10 02:00:00"))
-            assert len(ret) == 58
+        self.bv = BoosterValves(self.client, TimeDelta(3600, format="sec"))
+        ret = await self.get_tests(Time("2024-01-10 01:00:00"), Time("2024-01-10 02:00:00"))
+        assert len(ret) == 58
 
-            ret = await self.get_tests(Time("2024-01-10 00:00:00"), Time("2024-01-10 10:00:00"))
-            assert len(ret) == 432
+        ret = await self.get_tests(Time("2024-01-10 00:00:00"), Time("2024-01-10 10:00:00"))
+        assert len(ret) == 432
 
 
 if __name__ == "__main__":
-    if "RECORD_MODE" not in os.environ:
-        print(f"To generate new cassettes with pre-downloaded data use: RECORD_MODE=all python {sys.argv[0]}")
     unittest.main()

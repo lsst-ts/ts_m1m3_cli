@@ -1,0 +1,887 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.34.2
+    method: GET
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/health
+  response:
+    body:
+      string: '{"checks": [], "message": "ready for queries and writes", "name": "influxdb",
+        "status": "pass", "version": "v1.12.4"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '108'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:46 GMT
+      Request-Id:
+      - 746a9b39bab898295dc14e44ed4bbd35
+      Strict-Transport-Security:
+      - max-age=16070400
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 746a9b39bab898295dc14e44ed4bbd35
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time >= '2024-09-09T13:28:04.000Z' AND time <= '2024-09-16T13:28:04.000Z'
+        AND primaryTest147 = 3
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0, "series": [{"name": "lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus",
+        "columns": ["time", "primaryTest147"], "values": [[1726018435185314000, 3],
+        [1726103206515919000, 3], [1726197322610405000, 3], [1726272151898450000,
+        3], [1726286256453767000, 3], [1726326523868278000, 3], [1726364546303391000,
+        3], [1726415395883984000, 3], [1726456414546327000, 3], [1726487143359996000,
+        3]]}]}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:46 GMT
+      Request-Id:
+      - 252e1b00724104c14a5910e73afabcc6
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 252e1b00724104c14a5910e73afabcc6
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-11T01:33:55.185Z' AND time <= '2024-09-11T01:34:55.185Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:47 GMT
+      Request-Id:
+      - 276e5b2f960987e191ca987b0cbc66f5
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 276e5b2f960987e191ca987b0cbc66f5
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-12T01:06:46.516Z' AND time <= '2024-09-12T01:07:46.516Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:47 GMT
+      Request-Id:
+      - e226784f8834669e0b29a208cf2934d8
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - e226784f8834669e0b29a208cf2934d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-13T03:15:22.610Z' AND time <= '2024-09-13T03:16:22.610Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:47 GMT
+      Request-Id:
+      - dd9fa04569883e4bea310c1ca1a5aeec
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - dd9fa04569883e4bea310c1ca1a5aeec
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-14T00:02:31.898Z' AND time <= '2024-09-14T00:03:31.898Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:47 GMT
+      Request-Id:
+      - 0deb0c000a302eeabe430f70ca38e6a5
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 0deb0c000a302eeabe430f70ca38e6a5
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-14T03:57:36.454Z' AND time <= '2024-09-14T03:58:36.454Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:48 GMT
+      Request-Id:
+      - c1b5432085471ef68f5202eef17cbc44
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - c1b5432085471ef68f5202eef17cbc44
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-14T15:08:43.868Z' AND time <= '2024-09-14T15:09:43.868Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:48 GMT
+      Request-Id:
+      - 27572594bbcaba086e17368dfbb40a4b
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 27572594bbcaba086e17368dfbb40a4b
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-15T01:42:26.303Z' AND time <= '2024-09-15T01:43:26.303Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:48 GMT
+      Request-Id:
+      - 61998f5b7316c92f7d26249f75431cf7
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 61998f5b7316c92f7d26249f75431cf7
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-15T15:49:55.884Z' AND time <= '2024-09-15T15:50:55.884Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:48 GMT
+      Request-Id:
+      - d3d8951a99f683e02ce2b010d97d9472
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - d3d8951a99f683e02ce2b010d97d9472
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-16T03:13:34.546Z' AND time <= '2024-09-16T03:14:34.546Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:48 GMT
+      Request-Id:
+      - 617eb2c65d10d6a5b0a99c7f23f3fcab
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 617eb2c65d10d6a5b0a99c7f23f3fcab
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, primaryTest147 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-16T11:45:43.360Z' AND time <= '2024-09-16T11:46:43.360Z'
+        AND primaryTest147 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:49 GMT
+      Request-Id:
+      - 5e66a66d1f02d8c1312bd2b95986dc9c
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 5e66a66d1f02d8c1312bd2b95986dc9c
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time >= '2024-09-09T13:28:04.000Z' AND time <= '2024-09-16T13:28:04.000Z'
+        AND secondaryTest109 = 3
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0, "series": [{"name": "lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus",
+        "columns": ["time", "secondaryTest109"], "values": [[1726018448826116000,
+        3], [1726103220223332000, 3], [1726197336251488000, 3], [1726272165532733000,
+        3], [1726286270171079000, 3], [1726326537502435000, 3], [1726364559992415000,
+        3], [1726415409596850000, 3], [1726456428261901000, 3], [1726487157081684000,
+        3]]}]}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:49 GMT
+      Request-Id:
+      - c5da782ff695533c21eacb8d871e0d4f
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - c5da782ff695533c21eacb8d871e0d4f
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-11T01:34:08.826Z' AND time <= '2024-09-11T01:35:08.826Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:49 GMT
+      Request-Id:
+      - 9a345f71eddb1e674c57a064b74dbf5b
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 9a345f71eddb1e674c57a064b74dbf5b
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-12T01:07:00.223Z' AND time <= '2024-09-12T01:08:00.223Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:49 GMT
+      Request-Id:
+      - f3c3ea2e7105e356b5aa411a7064d3f6
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - f3c3ea2e7105e356b5aa411a7064d3f6
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-13T03:15:36.251Z' AND time <= '2024-09-13T03:16:36.251Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:49 GMT
+      Request-Id:
+      - e720c88eb6fce4b64315f8524422673c
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - e720c88eb6fce4b64315f8524422673c
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-14T00:02:45.533Z' AND time <= '2024-09-14T00:03:45.533Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:49 GMT
+      Request-Id:
+      - 5224445b15a8b82d16c0428df5de7af0
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 5224445b15a8b82d16c0428df5de7af0
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-14T03:57:50.171Z' AND time <= '2024-09-14T03:58:50.171Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:50 GMT
+      Request-Id:
+      - 2654a634b6260e59d4df0564705de1bb
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 2654a634b6260e59d4df0564705de1bb
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-14T15:08:57.502Z' AND time <= '2024-09-14T15:09:57.502Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:50 GMT
+      Request-Id:
+      - cebe8b9265682e648f885665ff3d8423
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - cebe8b9265682e648f885665ff3d8423
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-15T01:42:39.992Z' AND time <= '2024-09-15T01:43:39.992Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:50 GMT
+      Request-Id:
+      - 545ad498e8eee374e7e9d7462bdde31f
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 545ad498e8eee374e7e9d7462bdde31f
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-15T15:50:09.597Z' AND time <= '2024-09-15T15:51:09.597Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:50 GMT
+      Request-Id:
+      - 6aacaab8e87b3602a1e08e7586a6bfaa
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 6aacaab8e87b3602a1e08e7586a6bfaa
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-16T03:13:48.262Z' AND time <= '2024-09-16T03:14:48.262Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:50 GMT
+      Request-Id:
+      - 5dac18036cfe38e3a814b6c91cec88d4
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 5dac18036cfe38e3a814b6c91cec88d4
+    status:
+      code: 200
+      message: OK
+- request:
+    body:
+      chunked: 'false'
+      db: efd
+      epoch: ns
+      q: SELECT time, secondaryTest109 FROM "efd"."autogen"."lsst.sal.MTM1M3.logevent_forceActuatorBumpTestStatus"
+        WHERE time > '2024-09-16T11:45:57.082Z' AND time <= '2024-09-16T11:46:57.082Z'
+        AND secondaryTest109 >= 7
+    headers: {}
+    method: POST
+    uri: https://usdf-rsp.slac.stanford.edu/influxdb-enterprise-data/query
+  response:
+    body:
+      string: '{"results": [{"statement_id": 0}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 02 Oct 2026 08:51:50 GMT
+      Request-Id:
+      - 4fa35f2d86888de8bb5dcd76b595318b
+      Strict-Transport-Security:
+      - max-age=16070400
+      Transfer-Encoding:
+      - chunked
+      X-Influxdb-Build:
+      - ENT
+      X-Influxdb-Version:
+      - v1.12.4
+      X-Request-Id:
+      - 4fa35f2d86888de8bb5dcd76b595318b
+    status:
+      code: 200
+      message: OK
+version: 1
