@@ -91,7 +91,7 @@ async def run_loop() -> None:
 
     logging.basicConfig(format="%(asctime)s %(message)s", level=level)
 
-    with EfdClient(args.efd) as client:
+    async with EfdClient(args.efd) as client:
         btt = BumpTestTimes(client)
         m1m3_forces = M1M3ForceActuatorForces(args.efd)
 
@@ -120,15 +120,41 @@ async def run_loop() -> None:
                     url,
                 )
                 if args.details:
-                    faf = ForceActuatorForces(test.start_time, test.end_time, client)
+                    faf = ForceActuatorForces(client, test.start_time, test.end_time)
                     fa_fe = await faf.actuator_following_error(actuator)
-                    print(
-                        f"Following errors min: {fa_fe.primary.min():.3f} N "
-                        f"max: {fa_fe.secondary.max():.3f} N"
-                    )
+                    if actuator.s_index is not None:
+                        print(
+                            f"Following errors primary min: {fa_fe.primary.min():.3f} N "
+                            f"max: {fa_fe.primary.max():.3f} N "
+                            f"secondary min: {fa_fe.secondary.min():.3f} N "
+                            f" max: {fa_fe.secondary.max():.3f} N"
+                        )
+                    else:
+                        print(
+                            f"Following errors primary min: {fa_fe.primary.min():.3f} N "
+                            f"max: {fa_fe.primary.max():.3f} N"
+                        )
                     following_errors = await faf.following_errors()
                     flat_fe = following_errors.values.reshape(-1)
                     print(f"All following errors min: {flat_fe.min():.3f} N max {flat_fe.max():.3f} N")
+
+                    not_tested = await test.not_tested_failed()
+                    if len(not_tested):
+                        print(sty.fg.red, f"Not-tested failed: {len(not_tested)}", sty.fg.rs)
+                        for nt in not_tested:
+                            nt_fa_id = nt.get_failed_actuator_id()
+                            url = m1m3_forces.fa_url(
+                                test.start_time, test.end_time, force_actuator_from_id(nt_fa_id)
+                            )
+                            print(
+                                sty.fg.yellow,
+                                f" -- {nt_fa_id} avg={nt.average:.3f} N RMS={nt.error_rms:.3f} N",
+                                f"axis: {nt.get_axis().name}",
+                                sty.fg.rs,
+                                url,
+                            )
+                    else:
+                        print(sty.fg.green, "All not-tested FAs passed.", sty.fg.rs)
 
             print(sty.fg.yellow, "Primary bump tests - FA", actuator.actuator_id, sty.bg.rs)
             async for bump in btt.find_times(actuator, True, start_t, end_t):

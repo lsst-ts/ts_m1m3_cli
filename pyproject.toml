@@ -53,6 +53,7 @@ __version__ = "{version}"
 [tool.pytest]
 asyncio_mode = "auto"
 dependencies = [
+  "numba",
   "pytest-recording>=0.13.0",
   "vcrpy>=8.3.0",
 ]
