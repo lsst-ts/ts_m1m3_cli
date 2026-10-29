@@ -8,6 +8,23 @@ Version History
 
 .. towncrier release notes start
 
+v0.2.0 (2026-10-29)
+===================
+
+New Features
+------------
+
+- m1m3-earthquakes script. (`SSW-2973 <https://rubinobs.atlassian.net//browse/SSW-2973>`_)
+- Added not-tested FA details to --detail reporting. (`SSW-3081 <https://rubinobs.atlassian.net//browse/SSW-3081>`_)
+
+
+Other Changes and Additions
+---------------------------
+
+- Towncrier, license check. (`SSW-2973 <https://rubinobs.atlassian.net//browse/SSW-2973>`_)
+- Moved ts_m1m3_utils tests to ts_m1m3_utils repository. (`SSW-3081 <https://rubinobs.atlassian.net//browse/SSW-3081>`_)
+
+
 v0.1.2
 ======
 
