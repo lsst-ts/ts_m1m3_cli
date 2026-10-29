@@ -29,7 +29,14 @@ import numpy as np
 import pandas as pd
 from astropy.time import Time, TimeDelta
 from lsst_efd_client import EfdClient
-from numba import jit
+
+try:
+    from numba import jit
+except ModuleNotFoundError:
+
+    def jit(func):  # type: ignore
+        return func
+
 
 from lsst.ts.m1m3.utils import DurationTime
 
